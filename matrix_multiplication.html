@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Matrix Multiplication</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        textarea {
+            width: 300px;
+            height: 120px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+        }
+        pre {
+            background: #f0f0f0;
+            padding: 15px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h2>Matrix Multiplication</h2>
+
+    <p>Enter matrices row by row. Separate numbers with spaces. Separate rows with new lines.</p>
+
+    <label for="matrixA">Matrix A:</label><br>
+    <textarea id="matrixA" placeholder="e.g.\n1 2 3\n4 5 6"></textarea><br>
+
+    <label for="matrixB">Matrix B:</label><br>
+    <textarea id="matrixB" placeholder="e.g.\n7 8\n9 10\n11 12"></textarea><br>
+
+    <button onclick="multiply()">Multiply Matrices</button>
+
+    <h3>Result:</h3>
+    <pre id="result"></pre>
+
+    <script>
+        function parseMatrix(text) {
+            const rows = text.trim().split('\n');
+            return rows.map(row =>
+                row.trim().split(/\s+/).map(Number)
+            );
+        }
+
+        function multiplyMatrices(A, B) {
+            const rowsA = A.length;
+            const colsA = A[0].length;
+            const rowsB = B.length;
+            const colsB = B[0].length;
+
+            // Validate dimensions
+            if (colsA !== rowsB) {
+                throw new Error("Number of columns in Matrix A must equal number of rows in Matrix B.");
+            }
+
+            const result = Array.from({ length: rowsA }, () => Array(colsB).fill(0));
+
+            for (let i = 0; i < rowsA; i++) {
+                for (let j = 0; j < colsB; j++) {
+                    for (let k = 0; k < colsA; k++) {
+                        result[i][j] += A[i][k] * B[k][j];
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        function multiply() {
+            const resultArea = document.getElementById("result");
+            try {
+                const A = parseMatrix(document.getElementById("matrixA").value);
+                const B = parseMatrix(document.getElementById("matrixB").value);
+
+                if (!A.length || !B.length || !A[0].length || !B[0].length) {
+                    throw new Error("Please enter valid matrix dimensions and values.");
+                }
+
+                const result = multiplyMatrices(A, B);
+                const formatted = result.map(row => row.join(" ")).join("\n");
+                resultArea.textContent = formatted;
+            } catch (error) {
+                resultArea.textContent = "❌ Error: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
